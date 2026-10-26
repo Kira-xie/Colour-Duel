@@ -1,0 +1,8 @@
+# Arduino WiFi and MQTT credentials
+arduino_secrets.h
+**/arduino_secrets.h
+
+# Temporary files
+*.tmp
+.DS_Store
+Thumbs.db
