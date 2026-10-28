@@ -1,171 +1,225 @@
-# Echo of Touch
-### Translating Physical Gestures into Colour Waves through IoT
+# Colour Duel
+
+### Explore Colour. Remember Colour. Challenge Colour.
+
+**An IoT-based RGB colour exploration and two-player matching game**
 
 **Module:** CASA0014 – Prototyping the Internet of Things  
 **Institution:** University College London (UCL)  
 **Student:** Jiahan Xie  
-**Development Period:** October 2026 – Present  
-**Project Status:** Physical prototyping and hardware validation in progress
+**Development period:** October–November 2026  
+**Project status:** Functional prototype; physical enclosure and final documentation in progress
 
 ---
 
 ## 1. Project Overview
 
-**Echo of Touch** is a tangible Internet of Things (IoT) prototype that explores how brief physical interactions can be transformed into expressive visual feedback across a connected environment.
+**Colour Duel** is a tangible Internet of Things (IoT) prototype that explores how physical controls can make digital colour mixing intuitive, playful and social.
 
-The project uses a handmade cardboard interface containing a piezoelectric disc sensor. Physical interactions such as tapping, pressing or gently deforming the controller generate electrical signals through the piezoelectric effect.
+Three rotary potentiometers independently control the **red (R), green (G) and blue (B)** channels of a connected 72-pixel lighting display. An Arduino MKR WiFi 1010 reads the physical inputs, processes their values and sends RGB frames over Wi-Fi and MQTT to the **Vespera / Lumi** display.
 
-An Arduino MKR WiFi 1010 is used to process these signals and communicate with the Vespera lighting system through Wi-Fi and MQTT. The intended output is a responsive colour animation across 72 LEDs.
+The prototype has **two complementary interaction modes**:
 
-Rather than simply switching lights on and off, Echo of Touch explores how a momentary physical gesture can leave a temporary visual trace, resembling a ripple or an echo.
-
-The project combines physical prototyping, sensor experimentation, signal processing, wireless communication and interactive lighting design.
+1. **RGB Exploration Mode:** With no game running, anyone can freely rotate the three controls and immediately see how different red, green and blue intensities combine into a single colour across all 72 pixels.
+2. **Colour Duel Mode:** Pressing the physical button starts a two-player colour-memory challenge. Players take turns reconstructing a briefly displayed target colour using the same three controls. The system evaluates their attempts and displays the winner through spatial lighting feedback.
 
 ## 2. Design Concept
 
-### From Physical Contact to Visual Echo
+### From colour exploration to colour competition
 
-The central idea is to translate a short physical gesture into a gradually expanding and fading wave of colour.
+RGB colour is often represented through numerical values or on-screen sliders. Colour Duel replaces these with three tactile rotary controls. The user can explore colour through hand movement and receive immediate visual feedback from a remote LED display.
 
-A user interacts with the cardboard controller through a light tap, press or squeeze. The piezoelectric sensor detects changes in mechanical stress and generates a transient electrical signal.
+The button introduces a second layer of interaction: a simple exploratory interface becomes a game of observation, memory and adjustment. Both modes use the same hardware, demonstrating how the meaning of a physical interface can change through software-defined states.
 
-The Arduino interprets the detected pulse and maps its amplitude to the intensity of the lighting response.
+### Mode A — RGB Exploration
 
-### Proposed Interaction
+This is the default state when the device is powered on and after each game finishes.
 
-1. **Idle:** All 72 LEDs display a soft blue-violet colour.
-2. **Gentle interaction:** A small detected pulse triggers a subtle purple colour transition.
-3. **Moderate interaction:** A larger pulse creates a more noticeable pink-purple wave.
-4. **Stronger pulse:** A more intense colour wave spreads across the LED grid, gradually approaching deep red.
-5. **Recovery:** The colours smoothly return to their original blue-violet state.
+- The **R** potentiometer adjusts red intensity from approximately 0 to 255.
+- The **G** potentiometer adjusts green intensity from approximately 0 to 255.
+- The **B** potentiometer adjusts blue intensity from approximately 0 to 255.
+- All **72 LEDs** display the resulting combined colour.
+- Users can experiment without a time limit, score or competitive objective.
+- Pressing the button switches to Colour Duel Mode.
 
-The proposed animation progresses across the 12-column × 6-row LED grid, creating a spatial colour gradient rather than changing all LEDs simultaneously.
+### Mode B — Colour Duel
 
-### Understanding the Sensor
+Two players use the same set of controls in sequence. Their goal is to reproduce a randomly generated target colour as closely as possible from memory.
 
-A piezoelectric disc responds primarily to changes in mechanical stress, such as tapping, vibration or bending.
-
-It is not designed to provide a stable measurement of sustained grip force.
-
-Therefore, Echo of Touch is intended to respond to physical interaction events and their relative signal amplitudes, rather than measure precise force or pressure.
-
-Different gestures may generate similar electrical signals. The prototype does not claim to identify individual gesture types without further signal analysis and testing.
+| Stage | Interaction | Lighting feedback |
+| --- | --- | --- |
+| 1. Start | Press the physical button | Game begins |
+| 2. Memorise | Observe the random target for 3 seconds | All 72 LEDs show the target |
+| 3. Player 1 ready | Wait 1.5 seconds | Left 36 LEDs show white; right side is off |
+| 4. Player 1 mixes | Adjust R, G and B; press to save | Left 36 LEDs show the live mixture |
+| 5. Player 2 ready | Wait 1.5 seconds | Right 36 LEDs show white; left side is off |
+| 6. Player 2 mixes | Adjust R, G and B; press to save | Right 36 LEDs show the live mixture |
+| 7. Judging | Automatic 1-second interval | All LEDs off |
+| 8. Result | No further input needed | Winning player's half lights up in their saved colour for 3 seconds |
+| 9. Reset | Automatic | All 72 LEDs return to live RGB Exploration Mode |
 
 ## 3. Hardware and Materials
 
-### Electronic Components
+### Electronic components
 
-- Arduino MKR WiFi 1010
-- Piezoelectric disc sensor
-- Breadboard
-- Jumper wires
-- 100kΩ and 1MΩ resistors
-- 100µF capacitor
-- Input protection components (under evaluation)
-- USB data cable
+| Component | Quantity | Purpose |
+| --- | ---: | --- |
+| Arduino MKR WiFi 1010 | 1 | Analogue input, game logic and wireless communication |
+| Rotary potentiometers | 3 | Independent R, G and B control |
+| Momentary push button | 1 | Start game and save each player's colour |
+| Breadboard | 1 | Prototyping electrical connections |
+| Jumper wires | As required | Signal, power and ground connections |
+| USB data/power cable | 1 | Programming and powering the Arduino |
+| Cardboard and assembly materials | As required | Planned protective and interactive enclosure |
+| Vespera / Lumi virtual LED display | 1 | Connected 72-pixel visual output |
 
-The Arduino MKR WiFi 1010 uses 3.3V logic. Because piezoelectric discs can generate transient positive and negative voltage spikes, a suitable input protection and biasing circuit is required before the sensor can be safely connected to the analogue input.
+The Arduino MKR WiFi 1010 uses **3.3 V logic**. Potentiometer wiring must be compatible with the board's analogue input voltage range; do not connect a 5 V analogue output to an MKR analogue pin.
 
-### Physical Prototype
+### Input connections
 
-- Corrugated cardboard
-- Cardboard support layers
-- Foam or cushioning material
-- Adhesive tape or glue
-- Flexible joining materials
-- Cutting and measuring tools
+| Input | Arduino pin | Function |
+| --- | --- | --- |
+| Red potentiometer wiper | `A0` | Red channel |
+| Green potentiometer wiper | `A1` | Green channel |
+| Blue potentiometer wiper | `A2` | Blue channel |
+| Push button | `D2` and `GND` | Active-low input using `INPUT_PULLUP` |
 
-The initial controller uses two layers of corrugated cardboard separated by a supporting structure.
+### Physical enclosure
 
-The design aims to allow limited and repeatable mechanical deformation while protecting the fragile piezoelectric ceramic and its electrical connections.
+The intended enclosure is a simple cardboard control panel with three clearly labelled rotary controls (**R / G / B**) and a prominent **START / SAVE** button. The structure should protect the Arduino and wiring while leaving the controls accessible, providing USB cable access and allowing the enclosure to be opened for maintenance.
 
-The first cardboard prototype has been assembled. Its mechanical sensitivity and suitability for the sensor will be evaluated through physical testing.
+Final enclosure dimensions, mounting details and photographs will be added after physical verification.
 
-## 4. System Architecture
+### LED arrangement
 
-The proposed communication process is:
+The Vespera / Lumi display contains **72 pixels** arranged as a **12-column × 6-row** grid. The firmware treats it as two groups of 36 pixels:
 
-**Physical gesture → Piezoelectric disc → Input protection and biasing circuit → Arduino MKR WiFi 1010 → Wi-Fi → MQTT Broker → Vespera**
+- **Player 1:** pixel indices `0–35` (left half in the tested display arrangement).
+- **Player 2:** pixel indices `36–71` (right half).
+- **Exploration and target display:** all indices `0–71`.
 
-The Arduino is intended to sample the piezoelectric signal, detect transient changes and map their relative amplitude to an RGB animation.
+Each pixel is represented by three consecutive bytes: **R, G, B**. One full display frame therefore contains **72 × 3 = 216 binary bytes**.
 
-The Vespera system uses 72 LEDs, with three bytes representing the red, green and blue components of each LED. Each complete frame therefore contains 216 bytes.
+### Wi-Fi and MQTT
 
-### MQTT Configuration
+| Parameter | Value |
+| --- | --- |
+| Board | Arduino MKR WiFi 1010 |
+| MQTT broker | `mqtt.cetools.org` |
+| MQTT port | `1884` |
+| Publish topic | `student/CASA0014/luminaire/24` |
+| Payload | 216 raw RGB bytes per frame |
+| Intended publish interval | Approximately 150 ms |
+| MQTT library | PubSubClient |
+| Wi-Fi library | WiFiNINA |
 
-| Parameter | Configuration |
-|---|---|
-| MQTT Broker | `mqtt.cetools.org` |
-| Port | `1884` |
-| Authentication | MQTT username and password |
-| MQTT Topic | `student/CASA0014/luminaire/24` |
-| LED Count | 72 |
-| RGB Payload | 216 bytes |
+**Security:** Wi-Fi and MQTT credentials belong in a local `arduino_secrets.h` file and must not be committed to a public repository. The topic and device identifier above are project-specific and may need changing for another people's setup.
 
-Wi-Fi and MQTT connection credentials are stored locally and excluded from the public GitHub repository.
+## 4. Colour Matching and Scoring
 
-## 5. Prototype Development
+The target colour and both player colours are stored as RGB triples. After Player 2 presses the button to save, the Arduino compares each player's colour against the target using a **weighted squared RGB distance**:
 
-### Stage 1 — Concept Development
+\[
+D^2 = 299(R_p-R_t)^2 + 587(G_p-G_t)^2 + 114(B_p-B_t)^2
+\]
 
-The project initially explored the relationship between grip strength and lighting intensity under the name *Grip to Glow*.
+Where:
 
-Following investigation of the piezoelectric disc, the concept was refined to focus on short physical interaction events rather than sustained force measurement.
+- \(R_p, G_p, B_p\) are the player's saved channel values.
+- \(R_t, G_t, B_t\) are the target channel values.
+- **Lower score means a closer match** under this metric.
 
-The revised concept, *Echo of Touch*, better reflects the physical behaviour of the selected sensor and the proposed ripple-like animation.
+The relative channel weights (0.299, 0.587 and 0.114, scaled by 1000 for integer arithmetic) are adapted from a familiar luminance-weighting convention. This is a **simple prototype scoring heuristic**, not a perceptually uniform colour-difference standard such as CIEDE2000.
 
-Initial design sketches have been created to explore the controller's shape, internal support structure and interaction method.
+The system awards the win to the player with the lower score. Equal scores produce a draw. The outcome is also printed to the Arduino Serial Monitor for inspection.
 
-### Stage 2 — Wi-Fi and MQTT Communication
+## 5. Software and Game Logic
 
-Initial Arduino experiments established Wi-Fi and MQTT communication using the MKR WiFi 1010.
+The Arduino sketch uses an explicit state machine:
 
-RGB data publishing to the personal Vespera MQTT topic has been tested independently of the piezoelectric sensor.
+```text
+FREE_MIXING
+    |
+    | Button press
+    v
+SHOW_TARGET (3 s)
+    |
+    v
+PLAYER_1_READY (1.5 s, white)
+    |
+    v
+PLAYER_1 (live RGB)
+    |
+    | Button saves P1
+    v
+PLAYER_2_READY (1.5 s, white)
+    |
+    v
+PLAYER_2 (live RGB)
+    |
+    | Button saves P2
+    v
+JUDGING (1 s)
+    |
+    v
+SHOW_WINNER (3 s)
+    |
+    v
+FREE_MIXING (automatic reset)
+```
 
-These tests provide a foundation for integrating real sensor input later.
+### Key libraries
 
-### Stage 3 — Cardboard Prototype V1
+```cpp
+#include <WiFiNINA.h>
+#include <PubSubClient.h>
+#include "arduino_secrets.h"
+```
 
-The first physical cardboard prototype has been constructed using layered corrugated cardboard and a central supporting element.
+### Running the prototype
 
-This early version is intended to investigate:
+1. Install **Arduino IDE**, select **Arduino MKR WiFi 1010**, and select the correct serial port.
+2. Install the **WiFiNINA** and **PubSubClient** libraries.
+3. Create a local `arduino_secrets.h` alongside the `.ino` sketch with `SECRET_SSID`, `SECRET_PASS`, `SECRET_MQTTUSER` and `SECRET_MQTTPASS` defined. Do not publish the real values.
+4. Upload the latest **Colour Duel V6** sketch.
+5. Open the Serial Monitor at **9600 baud** to inspect RGB values, connection status, saved colours and scores.
+6. Open the [Lumi display](https://www.iot.io/projects/lumi/) and configure it for the correct MQTT topic.
+7. Turn the knobs to explore colour, then press the button to start a duel.
 
-- How the controller responds to pressing and tapping.
-- Whether the internal structure allows small mechanical movements.
-- How the piezoelectric disc can be supported without excessive force on the ceramic surface.
-- How electrical wires can exit the enclosure without strain on solder joints.
+## 6. Prototype Development and Iteration
 
-The current support material is relatively rigid, and softer cushioning materials may be explored in subsequent iterations.
+### Stage 1 — Exploring physical colour control
 
-### Stage 4 — Breadboard Circuit V1
+The initial concept was a straightforward **RGB Colour Mixer**: three analogue rotary inputs controlling the R, G and B channels of a remote LED display. This established the central physical interaction and helped test how sensor readings could be mapped into colour.
 
-An initial breadboard assembly has been prepared to explore a mid-supply bias voltage for the Arduino's analogue input.
+### Stage 2 — Connecting Arduino to Vespera
 
-The planned static bias circuit uses two 100kΩ resistors to generate approximately 1.65V from a 3.3V supply, together with a capacitor and an analogue input connection.
+Wi-Fi and MQTT communication were developed using the Arduino MKR WiFi 1010 and the Vespera / Lumi display. A full frame requires 216 RGB bytes. During testing, the working connection used MQTT port **1884** and an increased PubSubClient buffer of **512 bytes**.
 
-**This is an unverified static bias circuit, not a completed piezoelectric protection circuit.**
+### Stage 3 — Adding the physical button
 
-Power connections, bias voltage, component polarity and analogue input levels require electrical verification before dynamic piezoelectric testing.
+A momentary button connected between **D2 and GND** was tested independently before being integrated into the main firmware. Using the Arduino's internal pull-up resistor allowed the button to trigger game actions without an external pull-down resistor.
 
-### Stage 5 — Sensor Testing and Integration (Planned)
+### Stage 4 — Developing Colour Duel
 
-The next development stage will involve:
+The project expanded from open-ended colour exploration to a two-player colour-memory game. The game introduced a random target, separate player turns, saved RGB values, weighted distance scoring and left/right LED feedback.
 
-- Verifying the 3.3V supply and static bias circuit.
-- Validating the piezoelectric input protection arrangement.
-- Recording raw sensor readings for different physical interactions.
-- Identifying transient peaks and comparing signal-processing methods.
-- Mapping detected events to colour-wave intensity.
-- Testing the complete Arduino–MQTT–Vespera interaction.
-- Evaluating the responsiveness and usability of the cardboard controller.
+### Stage 5 — Refining interaction and reset behaviour
 
-## 6. References
+Several software iterations addressed state transitions, including automatically judging after Player 2 saves, showing the winner for three seconds and reliably returning to free RGB mixing. The final interaction uses **1.5-second white ready screens** before each player's turn, avoiding a blocking requirement for all three potentiometers to reach their maximum values.
 
-- [UCL CASA0014 Vespera Workshop](https://workshops.cetools.org/codelabs/CASA0014-L5-vespera/)
-- [Arduino MKR WiFi 1010 Documentation](https://docs.arduino.cc/hardware/mkr-wifi-1010/)
-- [Arduino Piezo Knock Sensor Tutorial](https://docs.arduino.cc/built-in-examples/sensors/Knock/)
+### Stage 6 — Physical presentation and documentation
+
+The remaining presentation work includes confirming the as-built wiring diagram, documenting the cardboard enclosure, photographing the prototype, recording repeatable tests and organising the GitHub repository for the CASA0014 Project Crit.
+
+## 07. References
+
+- [Arduino MKR WiFi 1010 — Official Documentation](https://docs.arduino.cc/hardware/mkr-wifi-1010/)
+- [WiFiNINA Library](https://docs.arduino.cc/libraries/wifinina/)
 - [PubSubClient MQTT Library](https://pubsubclient.knolleary.net/)
+- [Vespera / Lumi Display](https://www.iot.io/projects/lumi/)
+- [UCL CASA0014 Workshop Resources](https://workshops.cetools.org/)
 
 ---
 
-*Developed as part of CASA0014 – Prototyping the Internet of Things, University College London.*
+*Developed for CASA0014 – Prototyping the Internet of Things, University College London.*
