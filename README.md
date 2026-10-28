@@ -188,31 +188,20 @@ FREE_MIXING (automatic reset)
 
 ## 6. Prototype Development and Iteration
 
-### Stage 1 — Exploring physical colour control
+The project evolved through **four main software versions**, with focused hardware and communication tests carried out between milestones. These versions document the progression from open-ended RGB exploration to a complete two-player colour-matching experience.
+### Version notes
 
-The initial concept was a straightforward **RGB Colour Mixer**: three analogue rotary inputs controlling the R, G and B channels of a remote LED display. This established the central physical interaction and helped test how sensor readings could be mapped into colour.
+**Colour Duel v1 — Basic RGB Colour Mixer.** The earliest working prototype focused on physical colour exploration. Rotating the R, G and B potentiometers changed the corresponding channels of the remote LED display in real time. This remains the default, non-game mode of the final project.
 
-### Stage 2 — Connecting Arduino to Vespera
+**Between v1 and v2 — Button Input Test.** A standalone sketch verified that the push button could be read reliably before it was used to start the game and save player choices. It is stored under `tests/`, rather than treated as a Colour Duel software version.
 
-Wi-Fi and MQTT communication were developed using the Arduino MKR WiFi 1010 and the Vespera / Lumi display. A full frame requires 216 RGB bytes. During testing, the working connection used MQTT port **1884** and an increased PubSubClient buffer of **512 bytes**.
+**Colour Duel v2 — Two-Player Colour Duel.** The project introduced its central game concept: players observe a target colour and take turns recreating it. This version established the interaction sequence but could not yet reliably compare the two results or reset the game.
 
-### Stage 3 — Adding the physical button
+**Colour Duel v3 — Winner Evaluation and Reset.** Weighted RGB scoring was added so that the lower colour-distance score wins. The result could be shown on the corresponding half of the LED display, and the system returned to free RGB mixing after the winner display.
 
-A momentary button connected between **D2 and GND** was tested independently before being integrated into the main firmware. Using the Arduino's internal pull-up resistor allowed the button to trigger game actions without an external pull-down resistor.
+**Colour Duel v4 — White Preparation and Player Handover.** Each player's turn begins with a short white visual cue before live knob control resumes. This makes the transition between players clearer and reduces the impression that Player 2 simply continues Player 1's colour. **The white cue does not physically reset the potentiometers**; the actual RGB values still depend on their positions.
 
-### Stage 4 — Developing Colour Duel
-
-The project expanded from open-ended colour exploration to a two-player colour-memory game. The game introduced a random target, separate player turns, saved RGB values, weighted distance scoring and left/right LED feedback.
-
-### Stage 5 — Refining interaction and reset behaviour
-
-Several software iterations addressed state transitions, including automatically judging after Player 2 saves, showing the winner for three seconds and reliably returning to free RGB mixing. The final interaction uses **1.5-second white ready screens** before each player's turn, avoiding a blocking requirement for all three potentiometers to reach their maximum values.
-
-### Stage 6 — Physical presentation and documentation
-
-The remaining presentation work includes confirming the as-built wiring diagram, documenting the cardboard enclosure, photographing the prototype, recording repeatable tests and organising the GitHub repository for the CASA0014 Project Crit.
-
-## 07. References
+## 7. References
 
 - [Arduino MKR WiFi 1010 — Official Documentation](https://docs.arduino.cc/hardware/mkr-wifi-1010/)
 - [WiFiNINA Library](https://docs.arduino.cc/libraries/wifinina/)
