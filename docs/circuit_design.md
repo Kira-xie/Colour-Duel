@@ -17,24 +17,6 @@ My first circuit used **three rotary angle sensors** to control red, green and b
 
 **Important:** The MKR WiFi 1010 uses **3.3V I/O**. I must not send a 5V signal into A0–A2. I also need to check the `VCC`, `GND` and signal labels on each sensor module rather than relying on wire colours.
 
-### Simple connection sketch
-
-```text
-                  Arduino MKR WiFi 1010
-
-  Red sensor signal   ─────────────── A0
-  Green sensor signal ─────────────── A1
-  Blue sensor signal  ─────────────── A2
-
-  All sensor VCC      ─────────────── 3.3V
-  All sensor GND      ─────────────── GND
-
-  Push button         ───── D2 ──[button]── GND
-                       (added in Version 2)
-```
-
-The breadboard helps me share the 3.3V and GND connections. The three signal lines remain separate.
-
 ## 3. How the inputs work
 
 The sensors change their output voltage when rotated. `analogRead()` reads each signal, and my code maps a **10-bit value (0–1023)** to an **RGB intensity (0–255)**. A ten-sample moving average helps reduce small fluctuations.
