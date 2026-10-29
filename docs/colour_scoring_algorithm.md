@@ -28,8 +28,6 @@ Y′ = 0.299R′ + 0.587G′ + 0.114B′
 
 These numbers sum to 1.000. In this video representation, green contributes most to luma (58.7%), followed by red (29.9%) and blue (11.4%). The coefficients reflect how the video system represents brightness from its RGB primaries, taking human visual sensitivity into account. They do not mean that everyone's eyes always perceive a green error as exactly 58.7% of a colour difference.
 
-![RGB scoring weights](../images/scoring_weights.png)
-
 **My adaptation:** BT.601 uses these weights to *combine colour channels into luma*. Colour Duel uses the same proportions to **weight squared differences between two colours**. That second step is my game-design choice, not a colour-distance formula published in BT.601.
 
 ## 3. Why not use different numbers?
