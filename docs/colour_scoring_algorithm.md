@@ -61,8 +61,6 @@ Player 1: 299×10² + 587×10² + 114×10² = 100,000
 Player 2: 299×30² + 587×5² + 114×10² = 295,175
 ```
 
-![Worked scoring example](../images/scoring_example.png)
-
 **Player 1 wins** because `100,000 < 295,175`. In the current game, the winner's half of the Lumi/Vespera display flashes three times before returning to Mode A.
 
 ## 5. What I learnt
