@@ -7,8 +7,6 @@
 **Module:** CASA0014 – Prototyping the Internet of Things  
 **Institution:** University College London (UCL)  
 **Student:** Jiahan Xie  
-**Development period:** October–November 2026  
-**Project status:** Functional prototype; physical enclosure and final documentation in progress
 
 ---
 
@@ -16,7 +14,7 @@
 
 **Colour Duel** is a tangible Internet of Things (IoT) prototype that explores how physical controls can make digital colour mixing intuitive, playful and social.
 
-Three rotary potentiometers independently control the **red (R), green (G) and blue (B)** channels of a connected 72-pixel lighting display. An Arduino MKR WiFi 1010 reads the physical inputs, processes their values and sends RGB frames over Wi-Fi and MQTT to the **Vespera / Lumi** display.
+Three rotary angle sensors independently control the **red (R), green (G) and blue (B)** channels of a connected 72-pixel lighting display. An Arduino MKR WiFi 1010 reads the physical inputs, processes their values and sends RGB frames over Wi-Fi and MQTT to the Vespera / Lumi display.
 
 The prototype has **two complementary interaction modes**:
 
@@ -35,9 +33,9 @@ The button introduces a second layer of interaction: a simple exploratory interf
 
 This is the default state when the device is powered on and after each game finishes.
 
-- The **R** potentiometer adjusts red intensity from approximately 0 to 255.
-- The **G** potentiometer adjusts green intensity from approximately 0 to 255.
-- The **B** potentiometer adjusts blue intensity from approximately 0 to 255.
+- The **R** rotary angle sensor adjusts red intensity from approximately 0 to 255.
+- The **G** rotary angle sensor adjusts green intensity from approximately 0 to 255.
+- The **B** rotary angle sensor adjusts blue intensity from approximately 0 to 255.
 - All **72 LEDs** display the resulting combined colour.
 - Users can experiment without a time limit, score or competitive objective.
 - Pressing the button switches to Colour Duel Mode.
@@ -65,7 +63,7 @@ Two players use the same set of controls in sequence. Their goal is to reproduce
 | Component | Quantity | Purpose |
 | --- | ---: | --- |
 | Arduino MKR WiFi 1010 | 1 | Analogue input, game logic and wireless communication |
-| Rotary potentiometers | 3 | Independent R, G and B control |
+| Rotary angle sensors | 3 | Independent R, G and B control |
 | Momentary push button | 1 | Start game and save each player's colour |
 | Breadboard | 1 | Prototyping electrical connections |
 | Jumper wires | As required | Signal, power and ground connections |
@@ -73,7 +71,7 @@ Two players use the same set of controls in sequence. Their goal is to reproduce
 | Cardboard and assembly materials | As required | Planned protective and interactive enclosure |
 | Vespera / Lumi virtual LED display | 1 | Connected 72-pixel visual output |
 
-The Arduino MKR WiFi 1010 uses **3.3 V logic**. Potentiometer wiring must be compatible with the board's analogue input voltage range; do not connect a 5 V analogue output to an MKR analogue pin.
+The Arduino MKR WiFi 1010 uses **3.3 V logic**. Sensor wiring must be compatible with the board's analogue input voltage range; do not connect a 5 V analogue output to an MKR analogue pin. 
 
 ### Input connections
 
@@ -83,6 +81,8 @@ The Arduino MKR WiFi 1010 uses **3.3 V logic**. Potentiometer wiring must be com
 | Green potentiometer wiper | `A1` | Green channel |
 | Blue potentiometer wiper | `A2` | Blue channel |
 | Push button | `D2` and `GND` | Active-low input using `INPUT_PULLUP` |
+
+Wiring details and circuit explanation: [Circuit design](docs/circuit_design.md), including the original three-sensor circuit and the later button connection.
 
 ### Physical enclosure
 
@@ -119,9 +119,9 @@ Each pixel is represented by three consecutive bytes: **R, G, B**. One full disp
 
 The target colour and both player colours are stored as RGB triples. After Player 2 presses the button to save, the Arduino compares each player's colour against the target using a **weighted squared RGB distance**:
 
-\[
-D^2 = 299(R_p-R_t)^2 + 587(G_p-G_t)^2 + 114(B_p-B_t)^2
-\]
+$$
+D^2 = 299(R_p - R_t)^2 + 587(G_p - G_t)^2 + 114(B_p - B_t)^2
+$$
 
 Where:
 
@@ -132,6 +132,8 @@ Where:
 The relative channel weights (0.299, 0.587 and 0.114, scaled by 1000 for integer arithmetic) are adapted from a familiar luminance-weighting convention. This is a **simple prototype scoring heuristic**, not a perceptually uniform colour-difference standard such as CIEDE2000.
 
 The system awards the win to the player with the lower score. Equal scores produce a draw. The outcome is also printed to the Arduino Serial Monitor for inspection.
+
+**Formula explanation:** [Colour scoring algorithm](docs/colour_scoring_algorithm.md).
 
 ## 5. Software and Game Logic
 
@@ -200,6 +202,8 @@ The project evolved through **four main software versions**, with focused hardwa
 **Colour Duel v3 — Winner Evaluation and Reset.** Weighted RGB scoring was added so that the lower colour-distance score wins. The result could be shown on the corresponding half of the LED display, and the system returned to free RGB mixing after the winner display.
 
 **Colour Duel v4 — White Preparation and Player Handover.** Each player's turn begins with a short white visual cue before live knob control resumes. This makes the transition between players clearer and reduces the impression that Player 2 simply continues Player 1's colour. **The white cue does not physically reset the potentiometers**; the actual RGB values still depend on their positions.
+
+**A lesson from testing**: The white preparation stage resets the display, not the physical positions of the knobs. I found that a clear visual transition does not necessarily mean the physical inputs have reset. This remains an important interaction limitation to improve.
 
 ## 7. References
 
