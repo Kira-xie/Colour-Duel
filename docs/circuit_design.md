@@ -15,7 +15,7 @@ My first circuit used **three rotary angle sensors** to control red, green and b
 | Push button (added in V2) | **D2 ↔ GND** | Start game / save colour |
 | Arduino MKR WiFi 1010 | USB | Power and upload code |
 
-**Important:** The MKR WiFi 1010 uses **3.3V I/O**. I must not send a 5V signal into A0–A2. I also need to check the `VCC`, `GND` and signal labels on each sensor module rather than relying on wire colours.
+**Important:** The MKR WiFi 1010 uses **3.3V I/O**. It must not send a 5V signal into A0–A2. I also need to check the `VCC`, `GND` and signal labels on each sensor module rather than relying on wire colours.
 
 ## 3. How the inputs work
 
