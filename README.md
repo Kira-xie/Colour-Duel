@@ -53,7 +53,7 @@ Two players use the same set of controls in sequence. Their goal is to reproduce
 | 5. Player 2 ready | Wait 1.5 seconds | Right 36 LEDs show white; left side is off |
 | 6. Player 2 mixes | Adjust R, G and B; press to save | Right 36 LEDs show the live mixture |
 | 7. Judging | Automatic 1-second interval | All LEDs off |
-| 8. Result | No further input needed | Winning player's half lights up in their saved colour for 3 seconds |
+| 8. Result | No further input needed | Winning player's half flashes three times in their saved colour |
 | 9. Reset | Automatic | All 72 LEDs return to live RGB Exploration Mode |
 
 ## 3. Hardware and Materials
@@ -120,7 +120,7 @@ Each pixel is represented by three consecutive bytes: **R, G, B**. One full disp
 The target colour and both player colours are stored as RGB triples. After Player 2 presses the button to save, the Arduino compares each player's colour against the target using a **weighted squared RGB distance**:
 
 $$
-D^2 = 299(R_p - R_t)^2 + 587(G_p - G_t)^2 + 114(B_p - B_t)^2
+Score = 299(R_p - R_t)^2 + 587(G_p - G_t)^2 + 114(B_p - B_t)^2
 $$
 
 Where:
@@ -203,9 +203,23 @@ The project evolved through **four main software versions**, with focused hardwa
 
 **Colour Duel v4 — White Preparation and Player Handover.** Each player's turn begins with a short white visual cue before live knob control resumes. This makes the transition between players clearer and reduces the impression that Player 2 simply continues Player 1's colour. **The white cue does not physically reset the potentiometers**; the actual RGB values still depend on their positions.
 
-**A lesson from testing**: The white preparation stage resets the display, not the physical positions of the knobs. I found that a clear visual transition does not necessarily mean the physical inputs have reset. This remains an important interaction limitation to improve.
+**Colour Duel v5 — Three-Flash Winner Animation.** The winner feedback was improved so that the winning player's half of the LED display flashes **three times** (0.5 seconds on, 0.5 seconds off per flash). After the animation, the game automatically returns to free RGB exploration. In a draw, both halves flash.
 
-## 7. References
+## 7. Limitations
+
+### Physical controls do not reset automatically
+
+The **1.5-second white preparation screen resets the LED display visually, not the physical rotary positions**. When Player 2 starts, the three sensors still reflect Player 1's last settings. I learnt that changing the digital display does not change the physical input state. A clearer player-handover cue or a physical reset step would improve fairness and usability in a future version.
+
+### Display limitations — Vespera
+
+During testing, I noticed that **pale colours were less distinguishable on the physical Vespera display**, although the same RGB values appeared correctly on the Lumi interface. This highlighted an important limitation: the same digital colour values may produce different visual results depending on the display hardware.
+
+To improve visibility during the colour-matching game, I adjusted the random target generator to **favour darker colours** (each RGB channel is generated in the range 20–160, with the total limited to 80–300). Free RGB exploration still allows the full 0–255 range. This change came from practical testing, rather than simply a visual preference. 
+
+Both limitations are discussed in the [Testing and Iteration Log](docs/testing_log.md).
+
+## 8. References
 
 - [Arduino MKR WiFi 1010 — Official Documentation](https://docs.arduino.cc/hardware/mkr-wifi-1010/)
 - [WiFiNINA Library](https://docs.arduino.cc/libraries/wifinina/)
