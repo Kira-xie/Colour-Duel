@@ -9,10 +9,10 @@ In **Mode A**, users can freely mix RGB colours, so there is no correct answer. 
 I use a **weighted squared RGB distance**:
 
 ```text
-Score = 299(R − Rt)² + 587(G − Gt)² + 114(B − Bt)²
+Score = 299(Rp − Rt)² + 587(Gp − Gt)² + 114(Bp − Bt)²
 ```
 
-- **R, G, B:** a player's saved values (0–255).
+- **Rp, Gp, Bp:** a player's saved values (0–255).
 - **Rt, Gt, Bt:** the target's values (0–255).
 - **Lower score = closer match under this game's rule.** Equal scores mean a draw.
 
